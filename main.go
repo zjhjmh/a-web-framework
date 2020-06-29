@@ -44,12 +44,12 @@ func (p *apiRegister) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	aI := apiInfo{
-		path:    "/zjh/[0-9]*$",
-		handler: indexHandler,
-	}
+	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Llongfile)
+	log.Print("服务器启动")
 	aR := &apiRegister{}
-	aR.Add(aI)
+	for _, url := range urls {
+		aR.Add(url)
+	}
 	err := http.ListenAndServe(":8000", aR)
 	if err != nil {
 		log.Fatal("listenAndServe: ", err)
