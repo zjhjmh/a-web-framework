@@ -2,13 +2,16 @@ package main
 
 import (
 	"fmt"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"regexp"
+	"web-zjh/service/sql"
+	"web-zjh/settings"
 )
 
 type apiInfo struct {
-	path string
+	path    string
 	handler func(w http.ResponseWriter, r *http.Request)
 }
 
@@ -40,12 +43,34 @@ func (p *apiRegister) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if notFount {
 		http.NotFound(w, r)
 	}
-	//http.NotFound(w, r)
+}
+
+
+type auth_group struct {
+	id   int
+	name string
 }
 
 func main() {
 	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Llongfile)
 	log.Print("服务器启动")
+	//数据库测试
+	//DB := settings.DB
+	settings.ConnectDB()
+	defer settings.DB.Close()
+	//stmt, err := settings.DB.Prepare("INSERT INTO auth_group (id,name) VALUES ($1,$2) RETU/RNING id")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//agtest := auth_group{
+	//	id:   1,
+	//	name: "zjh",
+	//}
+	//_, err = stmt.Exec(agtest.id, agtest.name)
+
+	//查询数据
+	sql.FindUserById(1)
+
 	aR := &apiRegister{}
 	for _, url := range urls {
 		aR.Add(url)
